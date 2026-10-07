@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Tutorial</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      background: #000;
+      color: #eee;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+
+    /* BACK BUTTON */
+
+    .back {
+      position: fixed;
+      top: 28px;
+      left: 32px;
+      z-index: 10;
+
+      color: #e8e8e8;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+
+      transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .back::after {
+      content: "";
+      position: absolute;
+
+      left: 0;
+      bottom: -5px;
+
+      width: 100%;
+      height: 1px;
+
+      background: #8fffe8;
+
+      transform: scaleX(0);
+      transform-origin: left;
+
+      transition: transform 0.25s ease;
+    }
+
+    .back:hover {
+      color: #8fffe8;
+      transform: translateX(-2px);
+    }
+
+    .back:hover::after {
+      transform: scaleX(1);
+    }
+
+
+    /* PAGE */
+
+    .page {
+      width: 100%;
+      height: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 80px 32px;
+    }
+
+
+    /* VIDEO PLAYER */
+
+    .player {
+      position: relative;
+
+      width: min(900px, 85vw);
+      aspect-ratio: 16 / 9;
+
+      background: #080808;
+      border-radius: 14px;
+
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+
+      display: block;
+      object-fit: contain;
+
+      background: #080808;
+    }
+
+
+    /* CENTER PLAY BUTTON */
+
+    .center-play {
+      position: absolute;
+
+      top: 50%;
+      left: 50%;
+
+      transform: translate(-50%, -50%);
+
+      width: 62px;
+      height: 62px;
+
+      border: 0;
+      border-radius: 50%;
+
+      background: rgba(15, 15, 15, 0.75);
+      backdrop-filter: blur(8px);
+
+      color: #fff;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .center-play:hover {
+      background: rgba(143, 255, 232, 0.15);
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .center-play:active {
+      transform: translate(-50%, -50%) scale(0.94);
+    }
+
+    .center-play svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+
+    /* CONTROLS */
+
+    .controls {
+      position: absolute;
+
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      padding: 40px 18px 15px;
+
+      background: linear-gradient(
+        transparent,
+        rgba(0, 0, 0, 0.85)
+      );
+
+      transition: opacity 0.25s ease;
+    }
+
+    .progress {
+      width: 100%;
+      height: 3px;
+
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+
+      cursor: pointer;
+      overflow: hidden;
+
+      margin-bottom: 14px;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+
+      background: #8fffe8;
+      border-radius: inherit;
+
+      transition: width 0.08s linear;
+    }
+
+    .controls-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .control-button {
+      border: 0;
+      outline: 0;
+      background: none;
+
+      color: #e8e8e8;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+
+      transition:
+        color 0.2s ease,
+        transform 0.15s ease;
+    }
+
+    .control-button:hover {
+      color: #8fffe8;
+    }
+
+    .control-button:active {
+      transform: scale(0.86);
+    }
+
+    .control-button svg {
+      width: 19px;
+      height: 19px;
+
+      fill: currentColor;
+    }
+
+
+    /* TIME */
+
+    .time {
+      color: #aaa;
+      font-size: 12px;
+      font-weight: 500;
+
+      user-select: none;
+    }
+
+
+    /* VOLUME */
+
+    .volume {
+      width: 75px;
+
+      appearance: none;
+      -webkit-appearance: none;
+
+      height: 3px;
+
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+
+      cursor: pointer;
+    }
+
+    .volume::-webkit-slider-thumb {
+      appearance: none;
+      -webkit-appearance: none;
+
+      width: 9px;
+      height: 9px;
+
+      border-radius: 50%;
+
+      background: #8fffe8;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+
+      .back {
+        top: 20px;
+        left: 20px;
+      }
+
+      .page {
+        padding: 70px 15px;
+      }
+
+      .player {
+        width: 100%;
+        border-radius: 10px;
+      }
+
+      .volume {
+        display: none;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <a href="https://underwhellmed.github.io/entry/" class="back">
+    ← Back
+  </a>
+
+
+  <main class="page">
+
+    <div class="player" id="player">
+
+      <video
+        id="video"
+        src="/tutorial/tut.mp4"
+        preload="metadata"
+        playsinline>
+      </video>
+
+
+      <!-- BIG CENTER PLAY -->
+
+      <button class="center-play" id="centerPlay" aria-label="Play">
+
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+
+      </button>
+
+
+      <!-- CONTROLS -->
+
+      <div class="controls">
+
+        <div class="progress" id="progress">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+
+        <div class="controls-row">
+
+          <!-- PLAY / PAUSE -->
+
+          <button class="control-button" id="playButton" aria-label="Play">
+
+            <svg id="playIcon" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+
+          </button>
+
+
+          <!-- TIME -->
+
+          <div class="time">
+            <span id="currentTime">0:00</span>
+            /
+            <span id="duration">0:00</span>
+          </div>
+
+
+          <!-- VOLUME -->
+
+          <input
+            type="range"
+            class="volume"
+            id="volume"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+            aria-label="Volume"
+          >
+
+
+          <div class="spacer"></div>
+
+
+          <!-- FULLSCREEN -->
+
+          <button class="control-button" id="fullscreen" aria-label="Fullscreen">
+
+            <svg viewBox="0 0 24 24">
+              <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zm-3-12v2h3v3h2V5h-5z"/>
+            </svg>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+  <script>
+
+    const video = document.getElementById("video");
+
+    const player = document.getElementById("player");
+    const playButton = document.getElementById("playButton");
+    const playIcon = document.getElementById("playIcon");
+    const centerPlay = document.getElementById("centerPlay");
+
+    const progress = document.getElementById("progress");
+    const progressFill = document.getElementById("progressFill");
+
+    const currentTime = document.getElementById("currentTime");
+    const duration = document.getElementById("duration");
+
+    const volume = document.getElementById("volume");
+    const fullscreen = document.getElementById("fullscreen");
+
+
+    /* PLAY / PAUSE */
+
+    function togglePlay() {
+
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+
+    }
+
+    playButton.addEventListener("click", togglePlay);
+    centerPlay.addEventListener("click", togglePlay);
+    video.addEventListener("click", togglePlay);
+
+
+    /* CHANGE ICON */
+
+    video.addEventListener("play", () => {
+
+      playIcon.innerHTML =
+        '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+
+      centerPlay.style.opacity = "0";
+      centerPlay.style.pointerEvents = "none";
+
+    });
+
+
+    video.addEventListener("pause", () => {
+
+      playIcon.innerHTML =
+        '<path d="M8 5v14l11-7z"/>';
+
+      centerPlay.style.opacity = "1";
+      centerPlay.style.pointerEvents = "auto";
+
+    });
+
+
+    /* FORMAT TIME */
+
+    function formatTime(seconds) {
+
+      if (!isFinite(seconds)) return "0:00";
+
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+
+      return `${minutes}:${secs.toString().padStart(2, "0")}`;
+
+    }
+
+
+    /* VIDEO METADATA */
+
+    video.addEventListener("loadedmetadata", () => {
+
+      duration.textContent = formatTime(video.duration);
+
+    });
+
+
+    /* UPDATE PROGRESS */
+
+    video.addEventListener("timeupdate", () => {
+
+      const percentage =
+        (video.currentTime / video.duration) * 100 || 0;
+
+      progressFill.style.width = percentage + "%";
+
+      currentTime.textContent =
+        formatTime(video.currentTime);
+
+    });
+
+
+    /* SEEK */
+
+    progress.addEventListener("click", (event) => {
+
+      const rect = progress.getBoundingClientRect();
+
+      const position =
+        (event.clientX - rect.left) / rect.width;
+
+      video.currentTime =
+        position * video.duration;
+
+    });
+
+
+    /* VOLUME */
+
+    volume.addEventListener("input", () => {
+
+      video.volume = volume.value;
+
+    });
+
+
+    /* FULLSCREEN */
+
+    fullscreen.addEventListener("click", () => {
+
+      if (!document.fullscreenElement) {
+
+        player.requestFullscreen();
+
+      } else {
+
+        document.exitFullscreen();
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
